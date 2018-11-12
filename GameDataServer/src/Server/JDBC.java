@@ -31,7 +31,7 @@ public class JDBC {
 			try {
 				if(rs != null) {
 					rs.close();
-				}
+				}       
 				if(st != null) {
 					st.close();
 				}
