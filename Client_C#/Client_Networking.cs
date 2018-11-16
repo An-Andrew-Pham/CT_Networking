@@ -1,35 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Net;
 using System.Net.Sockets;
 
 public class Client_Networking : MonoBehaviour {
-
+    
     ClientSocket mySocket;
+    public Button Login_Button;
+    public GameObject Username;
+    public GameObject Password;
+    private String inputusername;
+    private String inputpassword;
 
 	// Use this for initialization
 	void Start () {
+        //Establish Connection
         mySocket = new ClientSocket();
+
     }
 	
+    void TaskOnClick()
+    {
+        inputusername = Username.GetComponent<InputField>().text;
+        inputpassword = Password.GetComponent<InputField>().text;
+        mySocket.Send(inputusername, inputpassword); //sends Data per click
+        Debug.Log("You have clicked the button!");
+      
+    }
+
 	// Update is called once per frame
 	void Update () {
+        Login_Button.onClick.AddListener(TaskOnClick);
         
     }
 }
 
 class ClientSocket
 {
+    Socket clientSocket;
+
     public ClientSocket()
     {
-        string toSend = "Hello!";
 
-        IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse("10.26.75.211"), 4343);
+        IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse("10.26.75.211"), 6789);
 
-        Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         clientSocket.Connect(serverAddress);
+
+    }
+
+    public void Send(String username, String password)
+    {
+        String toSend = username + "," + password;
 
         // Sending
         int toSendLen = System.Text.Encoding.ASCII.GetByteCount(toSend);
@@ -48,6 +73,7 @@ class ClientSocket
 
         Debug.Log("Client received: " + rcv);
 
-        clientSocket.Close();
+        //clientSocket.Close();
     }
+
 }
